@@ -15,64 +15,14 @@ header('Content-Type: text/html; charset=utf-8');
 require_once './lib/app.php';
 require_once './lib/simple_html_dom.php';
 
-$app = new App([
-    'new_domain' => $_SERVER['HTTP_HOST'],
-    'old_domain' => '',
-    'schema' => 'http',
-    'folders' => [
-        'cache' => 'cache',
-        'files' => 'files'
-    ],
-    'files' => [
-        'categories' => 'categories',
-        'products' => 'products',
-    ]
-]);
+require_once './functions.php';
 
-
-/**
- * Подключаем Modx
- */
-// require_once './lib/modx.php';
-// $uModx = new uModx();
-
-
-/**
- * Подключаем Битрикс
- */
-// require_once ($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
-
-
-/**
- * Подключаем uCoz
- */
-// require_once './lib/uAPImodule.php'; //Так же в подключаемом файле необходимо прописать адрес сайта, к которому будем обращаться
-// $uAPI = new Request(array(
-//     'oauth_consumer_key' => '',
-//     'oauth_consumer_secret' => '.',
-//     'oauth_token' => '',
-//     'oauth_token_secret' => ''
-// ));
-
-/**
- * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
- * ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ 
- */
-
-function getDefault() {
-    global $app;
-
-    echo '<div>Введите необходимые GET-параметры!</div>';
-}
-
-if (isset($_GET['go'])) { $go = $_GET['go']; } else { $go = 'default'; }
-
-switch($go) {
-    case "getFUNCTION":
-    getFUNCTION();
-    break;
-
-    default:
-    getDefault();
+switch(isset($_GET['action'])) {
+    case isset($_GET['action']):
+    if (isset($_GET['action']) && function_exists($_GET['action'])) {
+        $_GET['action']();
+    } else {
+        echo '<div>Введите необходимые GET-параметры!</div>';
+    }
     break;
 }
