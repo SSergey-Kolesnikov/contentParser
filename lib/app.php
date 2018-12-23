@@ -28,8 +28,8 @@ class App {
 
         $this->new_site = $this->options->schema . '://' . $this->options->new_domain;
         $this->old_site = $this->options->schema . '://' . $this->options->old_domain;
-        $this->cache = __DIR__ . DIRECTORY_SEPARATOR . $this->options->folders['cache'] . DIRECTORY_SEPARATOR;
-        $this->files = __DIR__ . DIRECTORY_SEPARATOR . $this->options->folders['files'] . DIRECTORY_SEPARATOR;
+        $this->cache = str_replace(basename(__DIR__), '', __DIR__) . $this->options->folders['cache'] . DIRECTORY_SEPARATOR;
+        $this->files = str_replace(basename(__DIR__), '', __DIR__) . $this->options->folders['files'] . DIRECTORY_SEPARATOR;
 
         if (!is_dir($this->cache)) {
             mkdir($this->cache);
