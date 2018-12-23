@@ -566,7 +566,7 @@ class App {
             }
         }
 
-        return (object)$data;
+        return (array)$data;
     }
 
     /**
