@@ -176,7 +176,7 @@ class App {
                 $file = $route;
                 break;
             case $this->is_url($route):
-                $file = $this->getFileName($route, 'cache');
+                $file = $this->getFileName(false, $route, 'cache');
                 if (!$this->checkFile($file)) {
                     $this->setFile($file, $route, $required, 'url');
                 }
@@ -187,19 +187,21 @@ class App {
     }
 
     /**
-     * @param $value
+     * @param string $prefix
+     * @param string $value
+     * @param string $type
      * @return string
      */
-    function getFileName($value, $type = 'json') {
+    function getFileName($prefix = false, $value, $type = 'json') {
         switch ($type) {
             case 'json':
-                return $this->files . $value . '.json';
+                return $this->files . $prefix . $value . '.json';
                 break;
             case 'cache':
-                return $this->cache . sha1($value) . '.cache';
+                return $this->cache . $prefix . sha1($value) . '.cache';
                 break;
             case 'crypt.json':
-                return $this->files . sha1($value) . '.json';
+                return $this->files . $prefix . sha1($value) . '.json';
                 break;
         }
     }
