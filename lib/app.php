@@ -176,7 +176,7 @@ class App {
                 $file = $route;
                 break;
             case $this->is_url($route):
-                $file = $this->getFileName(false, $route, 'cache');
+                $file = $this->getFileName($route, 'cache');
                 if (!$this->checkFile($file)) {
                     $this->setFile($file, $route, $required, 'url');
                 }
@@ -192,7 +192,7 @@ class App {
      * @param string $type
      * @return string
      */
-    function getFileName($prefix = false, $value, $type = 'json') {
+    function getFileName($value, $type = 'json', $prefix = false) {
         switch ($type) {
             case 'json':
                 return $this->files . $prefix . $value . '.json';
