@@ -367,24 +367,6 @@ class App {
         return $text;
     }
 
-    /**
-     * Создание алиаса
-     *
-     * @param string $alias - Текст для алиаса
-     * @return string
-     */
-    function createAlias($alias) {
-        $alias = mb_strtolower($alias, 'utf-8');
-        $alias = preg_replace('#&\w{2,6};#', ' ', $alias);
-
-        $alias = $this->replacementCharacters($alias);
-
-        $alias = preg_replace('#[^a-z0-9]#', '-', $alias);
-        $alias = trim(preg_replace('#-+#', '-', $alias), '-');
-        
-        return $alias;
-    }
-
     function replacementCharacters($text) {
         $text = str_replace(
             array('а','б','в','г','д','е','ё','ж','з','и','й','к','л','м','н','о','п','р','с','т','у','ф','х','ц','ч','ш','щ','ъ','ы','ь','э','ю','я'),
