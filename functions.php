@@ -8,7 +8,8 @@
 /**
  * Подключаем Битрикс
  */
-// require_once ($_SERVER["DOCUMENT_ROOT"]."/bitrix/modules/main/include/prolog_before.php");
+// require_once './lib/bitrix.php';
+// $uBitrix = new uBitrix();
 
 /**
  * Подключаем uCoz

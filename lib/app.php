@@ -556,6 +556,13 @@ class App {
     /**
      * @param null $arguments
      */
+    function message($arguments = null) {
+        echo '<div>' . $arguments . '</div>';
+    }
+
+    /**
+     * @param null $arguments
+     */
     function view($arguments = null) {
         echo '<pre>' . print_r($arguments, true);
     }
@@ -567,5 +574,4 @@ class App {
         echo '<pre>' . print_r($arguments, true);
         exit;
     }
-
 }
