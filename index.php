@@ -19,10 +19,6 @@ require_once './functions.php';
 
 switch(isset($_GET['action'])) {
     case isset($_GET['action']):
-    if (isset($_GET['action']) && function_exists($_GET['action'])) {
-        $_GET['action']();
-    } else {
-        echo '<div>Введите необходимые GET-параметры!</div>';
-    }
-    break;
+    	(isset($_GET['action']) && function_exists($_GET['action'])) ? $_GET['action']() : $app->message('Введите необходимые GET-параметры!');
+    	break;
 }
