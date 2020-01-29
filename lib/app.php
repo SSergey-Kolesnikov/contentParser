@@ -23,12 +23,14 @@ class App {
 
     /** @var uModx $modx */
     public $modx;
+
     /** @var uBitrix $bitrix */
     public $bitrix;
 
     /**
+     * App constructor
+     *
      * @param array $options
-     * @throws Exception
      */
     function __construct(array $options) {
         $this->options = (object)array_merge($this->options, $options);
@@ -41,10 +43,12 @@ class App {
         switch ($this->options->cms) {
             case 'modx':
                 require_once(dirname(__FILE__) . '/modx.php');
+                /** @var uModx $modx */
                 $this->modx = new uModx();
                 break;
             case 'bitrix':
                 require_once(dirname(__FILE__) . '/bitrix.php');
+                /** @var uBitrix $bitrix */
                 $this->bitrix = new uBitrix();
                 break;
             default:

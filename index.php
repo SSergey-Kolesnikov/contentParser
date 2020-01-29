@@ -28,6 +28,6 @@ require_once(dirname(__FILE__) . '/functions.php');
 
 switch(isset($_GET['action'])) {
     case isset($_GET['action']):
-    	(isset($_GET['action']) && function_exists($_GET['action'])) ? $_GET['action']($app) : $app->message('Введите необходимые GET-параметры!');
+    	(isset($_GET['action']) && function_exists($_GET['action'])) ? $_GET['action']() : $app->message('Введите необходимые GET-параметры!');
     	break;
 }

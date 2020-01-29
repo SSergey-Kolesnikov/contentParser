@@ -2,19 +2,43 @@
 if (!is_file('../bitrix/modules/main/include/prolog_before.php') && is_readable('../bitrix/modules/main/include/prolog_before.php')) {
     throw new Exception('Failed to mount the file api for Bitrix');
 }
-
-require_once '../bitrix/modules/main/include/prolog_before.php';
-
-CModule::IncludeModule("iblock");
-CModule::IncludeModule("catalog");
-CModule::IncludeModule("sale");
-
-$se = new CIBlockSection;
-$ibp = new CIBlockProperty;
-$ibpenum = new CIBlockPropertyEnum;
-$el = new CIBlockElement;
+/** @noinspection PhpIncludeInspection */
+require_once('../bitrix/modules/main/include/prolog_before.php');
 
 class uBitrix {
+    /** @var CIBlockSection $CIBlockSection */
+    public $cibProperty;
+
+    /** @var CIBlockProperty $CIBlockProperty */
+    public $cibPropertyEnum;
+
+    /** @var CIBlockPropertyEnum $CIBlockPropertyEnum */
+    public $CIBlockPropertyEnum;
+
+    /** @var CIBlockElement $CIBlockElement */
+    public $CIBlockElement;
+
+    /**
+     * uBitrix constructor
+     */
+    function __construct() {
+        CModule::IncludeModule("iblock");
+        CModule::IncludeModule("catalog");
+        CModule::IncludeModule("sale");
+
+        /** @var CIBlockSection $CIBlockSection */
+        $this->CIBlockSection = new CIBlockSection();
+
+        /** @var CIBlockProperty $CIBlockProperty */
+        $this->CIBlockProperty = new CIBlockProperty();
+
+        /** @var CIBlockPropertyEnum $CIBlockPropertyEnum */
+        $this->CIBlockPropertyEnum = new CIBlockPropertyEnum();
+
+        /** @var CIBlockElement $CIBlockElement */
+        $this->CIBlockElement = new CIBlockElement();
+    }
+
     /**
      * Получение ID свойства инфоблока по его названию
      *
@@ -26,8 +50,6 @@ class uBitrix {
      * @return integer
      */
     function getPropertyIDFromName($name, $iblock = 1, $data = false, $prefix = false) {
-        global $app;
-
         $db_properties_list = CIBlockProperty::GetList(Array('ID' => 'ASC'), array('NAME' => $name, 'IBLOCK_ID' => $iblock));
         if ($ar_properties_list = $db_properties_list->Fetch())
             $PropID = $ar_properties_list['ID'];
