@@ -1,9 +1,11 @@
 <?php
 class App {
+    /** @var array $options */
     public $options = [
         'new_domain' => null,
         'old_domain' => null,
         'schema' => 'http',
+        'cms' => '',
         'folders' => [
             'cache' => 'cache',
             'files' => 'files'
@@ -19,6 +21,11 @@ class App {
     public $cache = null;
     public $files = null;
 
+    /** @var uModx $modx */
+    public $modx;
+    /** @var uBitrix $bitrix */
+    public $bitrix;
+
     /**
      * @param array $options
      * @throws Exception
@@ -30,6 +37,19 @@ class App {
         $this->old_site = $this->options->schema . '://' . $this->options->old_domain;
         $this->cache = str_replace(basename(__DIR__), '', __DIR__) . $this->options->folders['cache'] . DIRECTORY_SEPARATOR;
         $this->files = str_replace(basename(__DIR__), '', __DIR__) . $this->options->folders['files'] . DIRECTORY_SEPARATOR;
+
+        switch ($this->options->cms) {
+            case 'modx':
+                require_once(dirname(__FILE__) . '/modx.php');
+                $this->modx = new uModx();
+                break;
+            case 'bitrix':
+                require_once(dirname(__FILE__) . '/bitrix.php');
+                $this->bitrix = new uBitrix();
+                break;
+            default:
+                exit($this->message('No CMS specified in configuration file'));
+        };
 
         if (!is_dir($this->cache)) {
             mkdir($this->cache);
