@@ -24,10 +24,4 @@ require_once(dirname(__FILE__) . '/lib/simple_html_dom.php');
 /** @var App $app */
 $app = new App($config);
 
-require_once(dirname(__FILE__) . '/functions.php');
-
-switch(isset($_GET['action'])) {
-    case isset($_GET['action']):
-    	(isset($_GET['action']) && function_exists($_GET['action'])) ? $_GET['action']() : $app->message('Введите необходимые GET-параметры!');
-    	break;
-}
+(!isset($_GET['action'])) ? $app->message('Укажите GET-параметр "action"!') : (isset($_GET['action']) && !file_exists(dirname(__FILE__) . '/' . $_GET['action'] . '.php')) ? $app->message('Файл ' . $_GET['action'] . '.php отсутствует!') : include(dirname(__FILE__) . '/' . $_GET['action'] . '.php');
