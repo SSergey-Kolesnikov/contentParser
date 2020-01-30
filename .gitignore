@@ -1,3 +1,11 @@
+# Игнорируем все Файлы .php в корне проекта кроме config.php, index.php
+/*.php
+!/config.php
+!/index.php
+
+# Игнорируем папку .idea по всему проекту
+/.idea
+
+# Игнорируем папки cache, files в корне проекта
 /cache/*
 /files/*
-/.idea
