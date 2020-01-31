@@ -21,7 +21,15 @@ require_once(dirname(__FILE__) . '/lib/app.php');
 (file_exists(dirname(__FILE__) . '/lib/simple_html_dom.php')) ?: exit('Could not load Simple HTML DOM library!');
 require_once(dirname(__FILE__) . '/lib/simple_html_dom.php');
 
-/** @var App $app */
-$app = new App($config);
+switch ($config['cms']) {
+    case 'bitrix':
+        require_once(dirname(__FILE__) . '/lib/bitrix.php');
+        /** @var uBitrix $app */
+        $app = new uBitrix($config);
+        break;
+    default:
+        /** @var App $app */
+        $app = new App($config);
+};
 
-(!isset($_GET['action'])) ? $app->message('Укажите GET-параметр "action"!') : (isset($_GET['action']) && !file_exists(dirname(__FILE__) . '/' . $_GET['action'] . '.php')) ? $app->message('Файл ' . $_GET['action'] . '.php отсутствует!') : include(dirname(__FILE__) . '/' . $_GET['action'] . '.php');
+(!isset($_GET['action'])) ? $app->message('Укажите GET-параметр "action"!') : (isset($_GET['action']) && !file_exists(dirname(__FILE__) . '/' . $_GET['action'] . '.php')) ? $app->message('PHP-файл соответсвующий GET-параметру "action=' . $_GET['action'] . '" отсутствует!') : include(dirname(__FILE__) . '/' . $_GET['action'] . '.php');

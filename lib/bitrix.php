@@ -1,16 +1,13 @@
 <?php
-if (!is_file('../bitrix/modules/main/include/prolog_before.php') && is_readable('../bitrix/modules/main/include/prolog_before.php')) {
-    throw new Exception('Failed to mount the file api for Bitrix');
-}
-/** @noinspection PhpIncludeInspection */
-require_once('../bitrix/modules/main/include/prolog_before.php');
+class uBitrix extends App {
+    /** @var CUser $CUser */
+    public $CUser;
 
-class uBitrix {
     /** @var CIBlockSection $CIBlockSection */
-    public $cibProperty;
+    public $CIBlockSection;
 
     /** @var CIBlockProperty $CIBlockProperty */
-    public $cibPropertyEnum;
+    public $CIBlockProperty;
 
     /** @var CIBlockPropertyEnum $CIBlockPropertyEnum */
     public $CIBlockPropertyEnum;
@@ -20,11 +17,26 @@ class uBitrix {
 
     /**
      * uBitrix constructor
+     *
+     * @param array $config
+     *
+     * @throws Exception
      */
-    function __construct() {
+    function __construct(array $config) {
+        parent::__construct($config);
+
+        if (!is_file('../bitrix/modules/main/include/prolog_before.php') && is_readable('../bitrix/modules/main/include/prolog_before.php')) {
+            throw new Exception('Failed to mount the file api for Bitrix');
+        }
+        /** @noinspection PhpIncludeInspection */
+        require_once('../bitrix/modules/main/include/prolog_before.php');
+
         CModule::IncludeModule("iblock");
         CModule::IncludeModule("catalog");
         CModule::IncludeModule("sale");
+
+        /** @var CUser $CUser */
+        $this->CUser = $USER;
 
         /** @var CIBlockSection $CIBlockSection */
         $this->CIBlockSection = new CIBlockSection();
@@ -42,55 +54,46 @@ class uBitrix {
     /**
      * Получение ID свойства инфоблока по его названию
      *
-     * @global $app
      * @param string $name Наименование свойства
      * @param integer $iblock ID инфоблока свойства
      * @param boolean|array $data Массив с данными для нового свойства инфоблока
      * @param boolean|string $prefix Префикс для поля "CODE"
+     *
      * @return integer
      */
     function getPropertyIDFromName($name, $iblock = 1, $data = false, $prefix = false) {
-        $db_properties_list = CIBlockProperty::GetList(Array('ID' => 'ASC'), array('NAME' => $name, 'IBLOCK_ID' => $iblock));
-        if ($ar_properties_list = $db_properties_list->Fetch())
-            $PropID = $ar_properties_list['ID'];
+        $properties = CIBlockProperty::GetList(Array('ID' => 'ASC'), array('NAME' => $name, 'IBLOCK_ID' => $iblock));
+        $PropID = ($properties_fields = $properties->Fetch()) ? $properties_fields['ID'] : 0;
 
-        if (!$PropID && is_array($data)) {
-            $data = array_merge($data, array('NAME' => $name, 'IBLOCK_ID' => $iblock));
-            $PropID = $this->setProperty($data, $prefix);
-        }
+        (!$PropID && is_array($data)) ? $PropID = $this->setProperty(array_merge($data, array('NAME' => $name, 'IBLOCK_ID' => $iblock)), $prefix) : false;
 
-        return (int)$PropID;
+        return (integer) $PropID;
     }
 
     /**
      * Создание свойства инфоблока
      *
-     * @global $app
-     * @global $ibp
      * @param array $data Набор полей свойства инфоблока
      * @param boolean|string $prefix Префикс для поля "CODE"
+     *
      * @return integer
      */
     function setProperty(array $data, $prefix = false) {
-        global $app, $ibp;
-
         foreach (['IBLOCK_ID', 'NAME'] as $required) {
             if (!isset($data[$required])) {
-                $app->message('Ошибка добавления свойства! Поле "'.$required.'" обязательно для заполнения.');
-                $app->view($data);
-                exit;
+                $this->message('Ошибка добавления свойства! Поле "' . $required . '" обязательно для заполнения.');
+                $this->viewEnd($data);
             }
         }
 
-        $data['CODE'] = $app->transliterationText($prefix.$data['NAME'], '_', true);
+        $data['CODE'] = ($data['CODE']) ? $prefix.$data['CODE'] : $this->transliterationText($prefix.$data['NAME'], '_', true);
 
-        if (!$PropID = $ibp->Add($data)) {
-            $app->message('Ошибка добавления свойства!');
-            $app->message($ibp->LAST_ERROR);
-            $app->view($data);
-            exit;
+        if (!$PropID = $this->CIBlockProperty->Add($data)) {
+            $this->message('Ошибка добавления свойства!');
+            $this->message($this->CIBlockProperty->LAST_ERROR);
+            $this->viewEnd($data);
         }
 
-        return (int)$PropID;
+        return (integer) $PropID;
     }
 }

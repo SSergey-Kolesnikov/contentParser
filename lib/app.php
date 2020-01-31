@@ -1,7 +1,7 @@
 <?php
 class App {
-    /** @var array $options */
-    public $options = [
+    /** @var array $config */
+    public $config = [
         'new_domain' => null,
         'old_domain' => null,
         'schema' => 'http',
@@ -17,51 +17,24 @@ class App {
     ];
 
     public $new_site = null;
+
     public $old_site = null;
-    public $cache = null;
-    public $files = null;
-
-    /** @var uModx $modx */
-    public $modx;
-
-    /** @var uBitrix $bitrix */
-    public $bitrix;
 
     /**
      * App constructor
      *
-     * @param array $options
+     * @param array $config
      */
-    function __construct(array $options) {
-        $this->options = (object)array_merge($this->options, $options);
+    function __construct(array $config) {
+        $this->config = (object) array_merge($this->config, $config);
 
-        $this->new_site = $this->options->schema . '://' . $this->options->new_domain;
-        $this->old_site = $this->options->schema . '://' . $this->options->old_domain;
-        $this->cache = str_replace(basename(__DIR__), '', __DIR__) . $this->options->folders['cache'] . DIRECTORY_SEPARATOR;
-        $this->files = str_replace(basename(__DIR__), '', __DIR__) . $this->options->folders['files'] . DIRECTORY_SEPARATOR;
+        $this->new_site = $this->config->schema . '://' . $this->config->new_domain;
+        $this->old_site = $this->config->schema . '://' . $this->config->old_domain;
+        $this->config->folder_cache = str_replace(basename(__DIR__), '', __DIR__) . $this->config->folders['cache'] . DIRECTORY_SEPARATOR;
+        $this->config->folder_files = str_replace(basename(__DIR__), '', __DIR__) . $this->config->folders['files'] . DIRECTORY_SEPARATOR;
 
-        switch ($this->options->cms) {
-            case 'modx':
-                require_once(dirname(__FILE__) . '/modx.php');
-                /** @var uModx $modx */
-                $this->modx = new uModx();
-                break;
-            case 'bitrix':
-                require_once(dirname(__FILE__) . '/bitrix.php');
-                /** @var uBitrix $bitrix */
-                $this->bitrix = new uBitrix();
-                break;
-            default:
-                exit($this->message('No CMS specified in configuration file'));
-        };
-
-        if (!is_dir($this->cache)) {
-            mkdir($this->cache);
-        }
-
-        if (!is_dir($this->files)) {
-            mkdir($this->files);
-        }
+        (is_dir($this->config->folder_cache)) ?: mkdir($this->config->folder_cache);
+        (is_dir($this->config->folder_files)) ?: mkdir($this->config->folder_files);
     }
 
     /**
@@ -69,6 +42,7 @@ class App {
      * @param boolean $only_header
      * @param boolean $user_agent
      * @param array $options
+     *
      * @return object
      */
     function getHttp($url, $only_header = false, $user_agent = false, array $options = []) {
@@ -100,7 +74,7 @@ class App {
 
         curl_close($curl);
 
-        return (object)array_merge($header, [
+        return (object) array_merge($header, [
             'output' => $output,
             'error_code' => $error_code,
             'error_message' => $error_message,
@@ -112,6 +86,7 @@ class App {
      * @param boolean $required
      * @param boolean $cache
      * @param string $charset
+     *
      * @return boolean|null|simple_html_dom
      * @throws Exception
      */
@@ -136,6 +111,7 @@ class App {
      * @param boolean $array
      * @param boolean $required
      * @param boolean $cache
+     *
      * @return array|object
      * @throws Exception
      */
@@ -154,13 +130,14 @@ class App {
             }
         }
 
-        return $array ? (array)json_decode(json_encode($output), true) : (object)$output;
+        return $array ? (array) json_decode(json_encode($output), true) : (object) $output;
     }
 
     /**
      * @param $route
      * @param boolean $remove_domain
      * @param boolean $cache
+     *
      * @return object
      * @throws Exception
      */
@@ -181,12 +158,13 @@ class App {
             }
         }
 
-        return (object)$output;
+        return (object) $output;
     }
 
     /**
      * @param $route
      * @param boolean $required
+     *
      * @return boolean|null|string
      * @throws Exception
      */
@@ -211,28 +189,32 @@ class App {
     }
 
     /**
-     * @param string $prefix
      * @param string $value
      * @param string $type
+     * @param boolean|string $prefix
+     *
      * @return string
      */
     function getFileName($value, $type = 'json', $prefix = false) {
         switch ($type) {
             case 'json':
-                return $this->files . $prefix . $value . '.json';
+                return $this->config->folder_files . $prefix . $value . '.json';
                 break;
             case 'cache':
-                return $this->cache . $prefix . sha1($value) . '.cache';
+                return $this->config->folder_cache . $prefix . sha1($value) . '.cache';
                 break;
             case 'crypt.json':
-                return $this->files . $prefix . sha1($value) . '.json';
+                return $this->config->folder_files . $prefix . sha1($value) . '.json';
                 break;
+            default:
+                return '';
         }
     }
 
     /**
      * @param $route
      * @param boolean $required
+     *
      * @return boolean|null|string
      * @throws Exception
      */
@@ -266,6 +248,8 @@ class App {
      * @param $file
      * @param $value
      * @param boolean $required
+     * @param string $type
+     *
      * @return boolean|integer|null
      * @throws Exception
      */
@@ -278,14 +262,14 @@ class App {
                     if ($this->checkFile($file)) {
                         return true;
                     }
-                    $set = $this->getFile($value, $required); 
-                    break;
+                    $set = $this->getFile($value, $required);
                 }
+                break;
             case 'file':
                 if (is_file($value)) {
                     $set = file_get_contents($value);
-                    break;
                 }
+                break;
             case 'json':
                 $set = json_encode($value);
                 break;
@@ -297,7 +281,7 @@ class App {
             $file = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR . ltrim($file, DIRECTORY_SEPARATOR);
         }
 
-        $info = (object)pathinfo($file);
+        $info = (object) pathinfo($file);
         $explode = ltrim(str_replace($_SERVER['DOCUMENT_ROOT'], null, $info->dirname), DIRECTORY_SEPARATOR);
         $dirname = $_SERVER['DOCUMENT_ROOT'] . DIRECTORY_SEPARATOR;
 
@@ -314,6 +298,7 @@ class App {
 
     /**
      * @param $link
+     *
      * @return boolean
      */
     function is_url($link) {
@@ -322,16 +307,18 @@ class App {
 
     /**
      * @param $link
+     *
      * @return boolean
      */
     function is_file_link($link) {
-        $info = (object)pathinfo($link);
+        $info = (object) pathinfo($link);
         return isset($info->extension) ? true : false;
     }
 
     /**
      * @param $file
      * @param boolean $required
+     *
      * @return boolean
      * @throws Exception
      */
@@ -349,10 +336,11 @@ class App {
 
     /**
      * @param string $text
+     *
      * @return string
      */
     function cleanText($text) {
-        $text = (string)$text;
+        $text = (string) $text;
         $text = htmlentities($text);
         $text = htmlspecialchars_decode($text);
 
@@ -365,7 +353,7 @@ class App {
         $text = preg_replace('%>[\s]{1,}%', '>', $text);
         $text = preg_replace('%[\s]{1,}<%', '<', $text);
 
-        return $text;
+        return (string) $text;
     }
 
     /**
@@ -374,23 +362,29 @@ class App {
      * @param string $text - Текст для транслитерации
      * @param string $separator - Разделитель между словами
      * @param boolean $uppercase - Перевести в верхний регистр
+     *
      * @return string
      */
     function transliterationText($text, $separator = ' ', $uppercase = false) {
         $text = mb_strtolower($text, 'utf-8');
         $text = preg_replace('#&\w{2,6};#', ' ', $text);
-        
+
         $text = $this->replacementCharacters($text);
 
         $text = preg_replace('#[^a-z0-9]#', $separator, $text);
         $text = trim(preg_replace('#-+#', $separator, $text), $separator);
-        
+
         if ($uppercase)
             $text = mb_strtoupper($text, 'utf-8');
-        
-        return $text;
+
+        return (string) $text;
     }
 
+    /**
+     * @param string $text
+     *
+     * @return string
+     */
     function replacementCharacters($text) {
         $text = str_replace(
             array('а','б','в','г','д','е','ё','ж','з','и','й','к','л','м','н','о','п','р','с','т','у','ф','х','ц','ч','ш','щ','ъ','ы','ь','э','ю','я'),
@@ -398,16 +392,17 @@ class App {
             $text
         );
 
-        return $text;
+        return (string) $text;
     }
 
     /**
      * @param $url
      * @param null $domain
+     *
      * @return null|string
      */
     function parsing_url($url, $domain = null) {
-        $parse = (object)parse_url((string)$url);
+        $parse = (object) parse_url((string)$url);
 
         if (empty($parse)) {
             return null;
@@ -416,12 +411,12 @@ class App {
         $path = null;
 
         if (empty($parse->host)) {
-            $parse->scheme = $this->options->schema;
+            $parse->scheme = $this->config->schema;
 
             if (!empty($domain)) {
                 $parse->host = $domain;
             } else {
-                $parse->host = $this->options->old_domain;
+                $parse->host = $this->config->old_domain;
             }
         }
 
@@ -452,20 +447,27 @@ class App {
     function arraySearch($array, $key, $text) {
         $i = 0;
         do {
-            if($array[$i][$key] == $text)
+            if ($array[$i][$key] == $text)
                 return $i;
         } while (++$i < count($array));
     }
 
+    /**
+     * @param object $html
+     * @param string $folder
+     *
+     * @return object
+     * @throws Exception
+     */
     function substitutionImages($html, $folder = 'images') {
         if (!($html instanceof simple_html_dom_node)) {
             throw new Exception('Argument $html is not an object of class simple_html_dom_node');
         }
         foreach ($html->find('img') as $image) {
             $src = $this->parsing_url($image->src);
-            $info = (object)pathinfo($src);
+            $info = (object) pathinfo($src);
             $file = '/' . trim($folder, '/') . '/' . sha1($src) . '.' . strtolower($info->extension);
-            
+
             if ($this->setFile($file, $src, false, 'url')) {
                 $image->src = $file;
             }
@@ -474,6 +476,14 @@ class App {
         return $html;
     }
 
+    /**
+     * @param object $html
+     * @param string $folder
+     * @param array $image_types
+     *
+     * @return object
+     * @throws Exception
+     */
     function substitutionReferencesImages($html, $folder = 'images', $image_types = array('jpg', 'jpeg', 'gif', 'png')) {
         if (!($html instanceof simple_html_dom_node)) {
             throw new Exception('Argument $html is not an object of class simple_html_dom_node');
@@ -481,8 +491,8 @@ class App {
 
         foreach ($html->find('a') as $link) {
             $src = $this->parsing_url($link->href);
-            $info = (object)pathinfo($src);
-            if ($this->is_file_link($src) && in_array(strtolower($info->extension), $image_types)) { 
+            $info = (object) pathinfo($src);
+            if ($this->is_file_link($src) && in_array(strtolower($info->extension), $image_types)) {
                 $file = '/' . trim($folder, '/') . '/' . sha1($src) . '.' . strtolower($info->extension);
                 if ($this->setFile($file, $src, false, 'url')) {
                     $link->href = $file;
@@ -490,9 +500,15 @@ class App {
             }
         }
 
-        return $html;
+        return (object) $html;
     }
 
+    /**
+     * @param object $html
+     *
+     * @return object
+     * @throws Exception
+     */
     function substitutionLinks($html) {
         if (!($html instanceof simple_html_dom_node)) {
             throw new Exception('Argument $html is not an object of class simple_html_dom_node');
@@ -500,17 +516,18 @@ class App {
 
         foreach ($html->find('a') as $link) {
             if (!$this->is_file_link($link->href)) {
-                $link->href = str_replace($this->old_site, '', $link->href);
+                $link->href = str_replace($this->config->old_site, '', $link->href);
             }
         }
 
-        return $html;
+        return (object) $html;
     }
 
     /**
      * Генерация пароля
      *
      * @param integer $length - Количество симоволов создаваемого пароля
+     *
      * @return string
      */
     function generatePass($length = 10) {
@@ -521,16 +538,17 @@ class App {
         for($i = 0; $i < $length; $i++) {
             $pass .= $allowable_characters[mt_rand(0, $ps_len-1)];
         }
-        
-        return $pass;
+
+        return (string) $pass;
     }
 
     /**
      * Получение основных мета тегов
-     * 
+     *
      * @param simple_html_dom $html
      * @param array $index
      * @param boolean $clean_text
+     *
      * @return object
      * @throws Exception
      */
@@ -574,7 +592,7 @@ class App {
             }
         }
 
-        return (array)$data;
+        return (object) $data;
     }
 
     /**
