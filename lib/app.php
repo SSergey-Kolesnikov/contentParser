@@ -10,10 +10,6 @@ class App {
             'cache' => 'cache',
             'files' => 'files'
         ],
-        'files' => [
-            'categories' => 'categories',
-            'products' => 'products',
-        ]
     ];
 
     public $new_site = null;

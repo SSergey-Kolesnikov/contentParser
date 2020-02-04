@@ -8,8 +8,4 @@ return [
         'cache' => 'cache',
         'files' => 'files',
     ],
-    'files' => [
-        'categories' => 'categories',
-        'products' => 'products',
-    ]
 ];
