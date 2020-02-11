@@ -1,142 +1,137 @@
 # contentParser
-Парсер контента для наполнения сайтов.
+РџР°СЂСЃРµСЂ РєРѕРЅС‚РµРЅС‚Р° РґР»СЏ РЅР°РїРѕР»РЅРµРЅРёСЏ СЃР°Р№С‚РѕРІ.
 
-## Использование
-Пользуем файл *functions.php*. При создании новой функции она будет доступна по GET-параметру *action*, к примеру функция:
-```php
-function example() {
-    echo 'HelloWorld';
-}
-```
-будет доступна по url'у `http(s)://ваш_сайт.домен/parser/?action=example`
+## РСЃРїРѕР»СЊР·РѕРІР°РЅРёРµ
+Р’ РєРѕСЂРЅРµ СЃРѕР·РґР°РµРј С„Р°Р№Р» *[РёРјСЏ_С„Р°Р№Р»Р°].php* Рё РѕРЅ Р±СѓРґРµС‚ РґРѕСЃС‚СѓРїРµРЅ РїРѕ url'Сѓ `http(s)://[РІР°С€_СЃР°Р№С‚].[РґРѕРјРµРЅ]/parser/?action=[РёРјСЏ_С„Р°Р№Р»Р°]`.
 
-## Документация
-- [Класс **App**](#class_App)
-    - [Метод **getHtml**](#method_getHtml) - получение DOM-дерева по url страницы
-    - [Метод **transliterationText**](#method_transliterationText) - транслитерация текста с переводом в нижний или верхний регистр
-    - [Метод **generatePass**](#method_generatePass) - генерация пароля
-    - [Метод **getMETA**](#method_getMETA) - получение основных мета тегов
-    - [Метод **message**](#method_message) - вывод сообщения на экран
-    - [Метод **view**](#method_view) - вывод переменной на экран
-- [Класс **uModx**](#class_uModx)
-    - [Метод **createResource**](#method_createResource) - создает новый ресурс
-    - [Метод **createUser**](#method_createUser) - создает нового пользователя
-- [Класс **uBitrix**](#class_uBitrix)
-    - [Метод **getPropertyIDFromName**](#method_getPropertyIDFromName) - получение ID свойства инфоблока по его названию
-    - [Метод **setProperty**](#method_setProperty) - создание свойства инфоблока
+## Р”РѕРєСѓРјРµРЅС‚Р°С†РёСЏ
+- [РљР»Р°СЃСЃ **App**](#class_App)
+    - [РњРµС‚РѕРґ **getHtml**](#method_getHtml) - РїРѕР»СѓС‡РµРЅРёРµ DOM-РґРµСЂРµРІР° РїРѕ url СЃС‚СЂР°РЅРёС†С‹
+    - [РњРµС‚РѕРґ **transliterationText**](#method_transliterationText) - С‚СЂР°РЅСЃР»РёС‚РµСЂР°С†РёСЏ С‚РµРєСЃС‚Р° СЃ РїРµСЂРµРІРѕРґРѕРј РІ РЅРёР¶РЅРёР№ РёР»Рё РІРµСЂС…РЅРёР№ СЂРµРіРёСЃС‚СЂ
+    - [РњРµС‚РѕРґ **generatePass**](#method_generatePass) - РіРµРЅРµСЂР°С†РёСЏ РїР°СЂРѕР»СЏ
+    - [РњРµС‚РѕРґ **getMETA**](#method_getMETA) - РїРѕР»СѓС‡РµРЅРёРµ РѕСЃРЅРѕРІРЅС‹С… РјРµС‚Р° С‚РµРіРѕРІ
+    - [РњРµС‚РѕРґ **message**](#method_message) - РІС‹РІРѕРґ СЃРѕРѕР±С‰РµРЅРёСЏ РЅР° СЌРєСЂР°РЅ
+    - [РњРµС‚РѕРґ **view**](#method_view) - РІС‹РІРѕРґ РїРµСЂРµРјРµРЅРЅРѕР№ РЅР° СЌРєСЂР°РЅ
+- [РљР»Р°СЃСЃ **uModx**](#class_uModx)
+    - [РњРµС‚РѕРґ **createResource**](#method_createResource) - СЃРѕР·РґР°РµС‚ РЅРѕРІС‹Р№ СЂРµСЃСѓСЂСЃ
+    - [РњРµС‚РѕРґ **createUser**](#method_createUser) - СЃРѕР·РґР°РµС‚ РЅРѕРІРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+- [РљР»Р°СЃСЃ **uBitrix**](#class_uBitrix)
+    - [РњРµС‚РѕРґ **getPropertyIDFromName**](#method_getPropertyIDFromName) - РїРѕР»СѓС‡РµРЅРёРµ ID СЃРІРѕР№СЃС‚РІР° РёРЅС„РѕР±Р»РѕРєР° РїРѕ РµРіРѕ РЅР°Р·РІР°РЅРёСЋ
+    - [РњРµС‚РѕРґ **setProperty**](#method_setProperty) - СЃРѕР·РґР°РЅРёРµ СЃРІРѕР№СЃС‚РІР° РёРЅС„РѕР±Р»РѕРєР°
 
-### <a name="class_App"></a> Класс App
+### <a name="class_App"></a> РљР»Р°СЃСЃ App
 
-### <a name="method_getHtml"></a> Метод getHtml
-Получение DOM-дерева по url страницы.
+### <a name="method_getHtml"></a> РњРµС‚РѕРґ getHtml
+РџРѕР»СѓС‡РµРЅРёРµ DOM-РґРµСЂРµРІР° РїРѕ url СЃС‚СЂР°РЅРёС†С‹.
 
 ```php
-$App->getHtml($route, $required = true, $cache = true, $charset = 'utf-8');
+$app->getHtml($route, $required = true, $cache = true, $charset = 'utf-8');
 ```
 
-### <a name="method_transliterationText"></a> Метод transliterationText
-Транслитерация текста с переводом в нижний или верхний регистр.
+### <a name="method_transliterationText"></a> РњРµС‚РѕРґ transliterationText
+РўСЂР°РЅСЃР»РёС‚РµСЂР°С†РёСЏ С‚РµРєСЃС‚Р° СЃ РїРµСЂРµРІРѕРґРѕРј РІ РЅРёР¶РЅРёР№ РёР»Рё РІРµСЂС…РЅРёР№ СЂРµРіРёСЃС‚СЂ.
 
 ```php
-$App->transliterationText($text, $separator = ' ', $uppercase = false);
+$app->transliterationText($text, $separator = ' ', $uppercase = false);
 ```
 
-### <a name="method_generatePass"></a> Метод generatePass
-Генерация пароля.
+### <a name="method_generatePass"></a> РњРµС‚РѕРґ generatePass
+Р“РµРЅРµСЂР°С†РёСЏ РїР°СЂРѕР»СЏ.
 
 ```php
-$App->generatePass($length = 10);
+$app->generatePass($length = 10);
 ```
 
-### <a name="method_getMETA"></a> Метод getMETA
-Получение основных мета тегов.
+### <a name="method_getMETA"></a> РњРµС‚РѕРґ getMETA
+РџРѕР»СѓС‡РµРЅРёРµ РѕСЃРЅРѕРІРЅС‹С… РјРµС‚Р° С‚РµРіРѕРІ.
 
 ```php
-$App->getMETA($html, array $index = [], $clean_text = true);
+$app->getMETA($html, array $index = [], $clean_text = true);
 ```
 
-### <a name="method_message"></a> Метод message
-Вывод сообщения на экран.
+### <a name="method_message"></a> РњРµС‚РѕРґ message
+Р’С‹РІРѕРґ СЃРѕРѕР±С‰РµРЅРёСЏ РЅР° СЌРєСЂР°РЅ.
 
 ```php
-$App->message($arguments = null);
+$app->message($arguments = null);
 ```
 
-### <a name="method_view"></a> Метод view
-Вывод переменной на экран.
+### <a name="method_view"></a> РњРµС‚РѕРґ view
+Р’С‹РІРѕРґ РїРµСЂРµРјРµРЅРЅРѕР№ РЅР° СЌРєСЂР°РЅ.
 
 ```php
-$App->view($arguments = null);
+$app->view($arguments = null);
 ```
 
-### <a name="class_uModx"></a> Класс uModx
+### <a name="class_uModx"></a> РљР»Р°СЃСЃ uModx
 
-### <a name="method_createResource"></a> Метод createResource
-Создает новый ресурс.
+### <a name="method_createResource"></a> РњРµС‚РѕРґ createResource
+РЎРѕР·РґР°РµС‚ РЅРѕРІС‹Р№ СЂРµСЃСѓСЂСЃ.
 
 ```php
 $uModx->createResource(array $data, $class = 'modDocument', $processor = 'resource/create');
 ```
 
-### <a name="method_createUser"></a> Метод createUser
-Создает нового пользователя.
+### <a name="method_createUser"></a> РњРµС‚РѕРґ createUser
+РЎРѕР·РґР°РµС‚ РЅРѕРІРѕРіРѕ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ.
 
 ```php
 $uModx->createUser(array $data, array $groupsList = array('Administrator'), $role = 1);
 ```
 
-### <a name="class_uBitrix"></a> Класс uBitrix
+### <a name="class_uBitrix"></a> РљР»Р°СЃСЃ uBitrix
+РљР»Р°СЃСЃ uBitrix РЅР°СЃР»РµРґСѓРµС‚СЃСЏ РѕС‚ РєР»Р°СЃСЃР° App.
 
-### <a name="method_getPropertyIDFromName"></a> Метод getPropertyIDFromName
-Получение ID свойства инфоблока по его названию.
+### <a name="method_getPropertyIDFromName"></a> РњРµС‚РѕРґ getPropertyIDFromName
+РџРѕР»СѓС‡РµРЅРёРµ ID СЃРІРѕР№СЃС‚РІР° РёРЅС„РѕР±Р»РѕРєР° РїРѕ РµРіРѕ РЅР°Р·РІР°РЅРёСЋ.
 
 ```php
-$uBitrix->getPropertyIDFromName($name, $iblock = 1, $data = false, $prefix = false);
+$app->getPropertyIDFromName($name, $iblock = 1, $data = false, $prefix = false);
 ```
 
-#### Список параметров
-- **$name** (string) - Наименование свойства, обязательный параметр;
-- **$iblock** (integer) - ID инфоблока свойства, обязательный параметр;
-- **$data** (boolean|array) - [Массив](https://dev.1c-bitrix.ru/api_help/iblock/fields.php#fproperty "Свойства элементов инфоблока (b_iblock_property)") с данными для нового свойства инфоблока, необязательный параметр;
-    - В случае передачи [массива](https://dev.1c-bitrix.ru/api_help/iblock/fields.php#fproperty "Свойства элементов инфоблока (b_iblock_property)") и отсутствии такого свойства у инфоблока - свойство будет создано;
-    - Передавать поля "NAME" и "IBLOCK_ID" необязательно;
-    - Поле "CODE" транслитерируется автоматически из наименования свойства и приводится к верхнему регистру;
-- **$prefix** (boolean|string) - Префикс для поля "CODE", необязательный параметр;
+#### РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ
+- **$name** (string) - РќР°РёРјРµРЅРѕРІР°РЅРёРµ СЃРІРѕР№СЃС‚РІР°, РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ;
+- **$iblock** (integer) - ID РёРЅС„РѕР±Р»РѕРєР° СЃРІРѕР№СЃС‚РІР°, РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ;
+- **$data** (boolean|array) - [РњР°СЃСЃРёРІ](https://dev.1c-bitrix.ru/api_help/iblock/fields.php#fproperty "РЎРІРѕР№СЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ РёРЅС„РѕР±Р»РѕРєР° (b_iblock_property)") СЃ РґР°РЅРЅС‹РјРё РґР»СЏ РЅРѕРІРѕРіРѕ СЃРІРѕР№СЃС‚РІР° РёРЅС„РѕР±Р»РѕРєР°, РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ;
+    - Р’ СЃР»СѓС‡Р°Рµ РїРµСЂРµРґР°С‡Рё [РјР°СЃСЃРёРІР°](https://dev.1c-bitrix.ru/api_help/iblock/fields.php#fproperty "РЎРІРѕР№СЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ РёРЅС„РѕР±Р»РѕРєР° (b_iblock_property)") Рё РѕС‚СЃСѓС‚СЃС‚РІРёРё С‚Р°РєРѕРіРѕ СЃРІРѕР№СЃС‚РІР° Сѓ РёРЅС„РѕР±Р»РѕРєР° - СЃРІРѕР№СЃС‚РІРѕ Р±СѓРґРµС‚ СЃРѕР·РґР°РЅРѕ;
+    - РџРµСЂРµРґР°РІР°С‚СЊ РїРѕР»СЏ "NAME" Рё "IBLOCK_ID" РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅРѕ;
+    - РџРѕР»Рµ "CODE", РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РѕРЅРѕ РЅРµ РїРµСЂРµРґР°РµС‚СЃСЏ РІ `$data`, С‚СЂР°РЅСЃР»РёС‚РµСЂРёСЂСѓРµС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РёР· РЅР°РёРјРµРЅРѕРІР°РЅРёСЏ СЃРІРѕР№СЃС‚РІР° Рё РїСЂРёРІРѕРґРёС‚СЃСЏ Рє РІРµСЂС…РЅРµРјСѓ СЂРµРіРёСЃС‚СЂСѓ;
+- **$prefix** (boolean|string) - РџСЂРµС„РёРєСЃ РґР»СЏ РїРѕР»СЏ "CODE", РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ;
 
-#### Возвращаемые значения
-Этот метод возвращает ID свойства (integer) инфоблока.
+#### Р’РѕР·РІСЂР°С‰Р°РµРјС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
+РњРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ ID СЃРІРѕР№СЃС‚РІР° (integer).
 
-#### Примеры
+#### РџСЂРёРјРµСЂС‹
 ```php
 $arFields = array(
     'PROPERTY_TYPE' => 'S',
     'SORT' => 100
 );
-$PropID = $uBitrix->getPropertyIDFromName('Цвет', 4, $arFields, 'OPTION_');
+$PropID = $app->getPropertyIDFromName('Р¦РІРµС‚', 4, $arFields, 'OPTION_');
 ```
 
-### <a name="method_setProperty"></a> Метод setProperty
-Создание свойства инфоблока
+### <a name="method_setProperty"></a> РњРµС‚РѕРґ setProperty
+РЎРѕР·РґР°РЅРёРµ СЃРІРѕР№СЃС‚РІР° РёРЅС„РѕР±Р»РѕРєР°
 
 ```php
-$uBitrix->setProperty(array $data, $prefix = false);
+$app->setProperty(array $data, $prefix = false);
 ```
 
-#### Список параметров
-- **$data** (array) - [Массив](https://dev.1c-bitrix.ru/api_help/iblock/fields.php#fproperty "Свойства элементов инфоблока (b_iblock_property)") с данными для создаваемого свойства инфоблока, обязательный параметр;
-    - Поле "CODE" транслитерируется автоматически из наименования свойства и приводится к верхнему регистру;
-- **$prefix** (boolean|string) - Префикс для поля "CODE", необязательный параметр;
+#### РЎРїРёСЃРѕРє РїР°СЂР°РјРµС‚СЂРѕРІ
+- **$data** (array) - [РњР°СЃСЃРёРІ](https://dev.1c-bitrix.ru/api_help/iblock/fields.php#fproperty "РЎРІРѕР№СЃС‚РІР° СЌР»РµРјРµРЅС‚РѕРІ РёРЅС„РѕР±Р»РѕРєР° (b_iblock_property)") СЃ РґР°РЅРЅС‹РјРё РґР»СЏ СЃРѕР·РґР°РІР°РµРјРѕРіРѕ СЃРІРѕР№СЃС‚РІР° РёРЅС„РѕР±Р»РѕРєР°, РѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ;
+    - РџРѕР»Рµ "CODE", РІ СЃР»СѓС‡Р°Рµ РµСЃР»Рё РѕРЅРѕ РЅРµ РїРµСЂРµРґР°РµС‚СЃСЏ РІ `$data`, С‚СЂР°РЅСЃР»РёС‚РµСЂРёСЂСѓРµС‚СЃСЏ Р°РІС‚РѕРјР°С‚РёС‡РµСЃРєРё РёР· РЅР°РёРјРµРЅРѕРІР°РЅРёСЏ СЃРІРѕР№СЃС‚РІР° Рё РїСЂРёРІРѕРґРёС‚СЃСЏ Рє РІРµСЂС…РЅРµРјСѓ СЂРµРіРёСЃС‚СЂСѓ;
+- **$prefix** (boolean|string) - РџСЂРµС„РёРєСЃ РґР»СЏ РїРѕР»СЏ "CODE", РЅРµРѕР±СЏР·Р°С‚РµР»СЊРЅС‹Р№ РїР°СЂР°РјРµС‚СЂ;
 
-#### Возвращаемые значения
-Этот метод возвращает ID свойства (integer) инфоблока.
+#### Р’РѕР·РІСЂР°С‰Р°РµРјС‹Рµ Р·РЅР°С‡РµРЅРёСЏ
+РњРµС‚РѕРґ РІРѕР·РІСЂР°С‰Р°РµС‚ ID СЃРІРѕР№СЃС‚РІР° (integer).
 
-#### Примеры
+#### РџСЂРёРјРµСЂС‹
 ```php
 $arFields = array(
-    'NAME' => 'Цвет',
+    'NAME' => 'Р¦РІРµС‚',
     'IBLOCK_ID' => 4,
     'PROPERTY_TYPE' => 'S',
     'SORT' => 100
 );
-$PropID = $uBitrix->setProperty($arFields, 'OPTION_');
+$PropID = $app->setProperty($arFields, 'OPTION_');
 ```
