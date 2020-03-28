@@ -21,11 +21,16 @@ require_once(dirname(__FILE__) . '/lib/app.php');
 (file_exists(dirname(__FILE__) . '/lib/simple_html_dom.php')) ?: exit('Could not load Simple HTML DOM library!');
 require_once(dirname(__FILE__) . '/lib/simple_html_dom.php');
 
-switch ($config['cms']) {
+switch (mb_strtolower($config['cms'], 'utf-8')) {
     case 'bitrix':
         require_once(dirname(__FILE__) . '/lib/bitrix.php');
         /** @var uBitrix $app */
         $app = new uBitrix($config);
+        break;
+    case 'modx':
+        require_once(dirname(__FILE__) . '/lib/modx.php');
+        /** @var uModx $app */
+        $app = new uModx($config);
         break;
     default:
         /** @var App $app */
