@@ -9,3 +9,4 @@
 # Игнорируем папки cache, files в корне проекта
 /cache/*
 /files/*
+/projects/*
