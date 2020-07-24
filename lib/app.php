@@ -83,7 +83,7 @@ class App {
      * @param boolean $cache
      * @param string $charset
      *
-     * @return boolean|null|simple_html_dom
+     * @return boolean|null|string
      * @throws Exception
      */
     function getHtml($route, $required = true, $cache = true, $charset = 'utf-8') {
@@ -95,9 +95,7 @@ class App {
             $response = $this->getFile($route, $required);
         }
 
-        if (!is_null($response)) {
-            $output = (new \simple_html_dom())->load($response);
-        }
+        (is_null($response)) ?: $output = $response;
 
         return $output;
     }
