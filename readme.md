@@ -9,7 +9,7 @@
     - [Метод **getHtml**](#method_getHtml) - получение DOM-дерева по url страницы
     - [Метод **transliterationText**](#method_transliterationText) - транслитерация текста с переводом в нижний или верхний регистр
     - [Метод **generatePass**](#method_generatePass) - генерация пароля
-    - [Метод **getMETA**](#method_getMETA) - получение основных мета тегов
+    - [Метод **getMETA_SHD**](#method_getMETA_SHD) - получение основных мета тегов
     - [Метод **message**](#method_message) - вывод сообщения на экран
     - [Метод **view**](#method_view) - вывод переменной на экран
 - [Класс **uModx**](#class_uModx)
@@ -42,11 +42,13 @@ $app->transliterationText($text, $separator = ' ', $uppercase = false);
 $app->generatePass($length = 10);
 ```
 
-### <a name="method_getMETA"></a> Метод getMETA
+### <a name="method_getMETA_SHD"></a> Метод getMETA_SHD
 Получение основных мета тегов.
 
+> Используется библиотека Simple HTML DOM
+
 ```php
-$app->getMETA($html, array $index = [], $clean_text = true);
+$app->getMETA_SHD($html, array $index = [], $clean_text = true);
 ```
 
 ### <a name="method_message"></a> Метод message

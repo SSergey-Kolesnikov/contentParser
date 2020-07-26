@@ -447,13 +447,13 @@ class App {
     }
 
     /**
-     * @param object $html
+     * @param simple_html_dom $html
      * @param string $folder
      *
      * @return object
      * @throws Exception
      */
-    function substitutionImages($html, $folder = 'images') {
+    function substitutionImages_SHD($html, $folder = 'images') {
         if (!($html instanceof simple_html_dom_node)) {
             throw new Exception('Argument $html is not an object of class simple_html_dom_node');
         }
@@ -471,14 +471,14 @@ class App {
     }
 
     /**
-     * @param object $html
+     * @param simple_html_dom $html
      * @param string $folder
      * @param array $image_types
      *
      * @return object
      * @throws Exception
      */
-    function substitutionReferencesImages($html, $folder = 'images', $image_types = array('jpg', 'jpeg', 'gif', 'png')) {
+    function substitutionReferencesImages_SHD($html, $folder = 'images', $image_types = array('jpg', 'jpeg', 'gif', 'png')) {
         if (!($html instanceof simple_html_dom_node)) {
             throw new Exception('Argument $html is not an object of class simple_html_dom_node');
         }
@@ -498,12 +498,12 @@ class App {
     }
 
     /**
-     * @param object $html
+     * @param simple_html_dom $html
      *
      * @return object
      * @throws Exception
      */
-    function substitutionLinks($html) {
+    function substitutionLinks_SHD($html) {
         if (!($html instanceof simple_html_dom_node)) {
             throw new Exception('Argument $html is not an object of class simple_html_dom_node');
         }
@@ -546,7 +546,7 @@ class App {
      * @return object
      * @throws Exception
      */
-    function getMETA($html, array $index = [], $clean_text = true) {
+    function getMETA_SHD($html, array $index = [], $clean_text = true) {
         if (!($html instanceof simple_html_dom)) {
             throw new Exception('Argument $html is not an object of class simple_html_dom');
         }
