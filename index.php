@@ -1,5 +1,5 @@
 <?php
-ini_set('error_reporting', E_ALL);
+ini_set('error_reporting', E_ALL & ~E_DEPRECATED);
 ini_set('display_errors', true);
 ini_set('max_execution_time ', 300);
 ini_set('memory_limit', '1G');
@@ -18,8 +18,12 @@ $config = require_once(dirname(__FILE__) . '/config.php');
 
 (file_exists(dirname(__FILE__) . '/lib/app.php')) ?: exit('Could not load App file!');
 require_once(dirname(__FILE__) . '/lib/app.php');
+
 (file_exists(dirname(__FILE__) . '/lib/simple_html_dom.php')) ?: exit('Could not load Simple HTML DOM library!');
 require_once(dirname(__FILE__) . '/lib/simple_html_dom.php');
+
+(file_exists(dirname(__FILE__) . '/lib/phpQuery.php')) ?: exit('Could not load phpQuery library!');
+require_once(dirname(__FILE__) . '/lib/phpQuery.php');
 
 switch (mb_strtolower($config['cms'], 'utf-8')) {
     case 'bitrix':
