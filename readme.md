@@ -7,6 +7,7 @@
 ## Документация
 - [Класс **App**](#class_App)
     - [Метод **getHtml**](#method_getHtml) - получение DOM-дерева по url страницы
+    - [Метод **unbuildTree**](#method_unbuildTree) - Разбор массива в виде иерархического дерева в обычный массив
     - [Метод **transliterationText**](#method_transliterationText) - транслитерация текста с переводом в нижний или верхний регистр
     - [Метод **generatePass**](#method_generatePass) - генерация пароля
     - [Метод **getMETA_SHD**](#method_getMETA_SHD) - получение основных мета тегов
@@ -26,6 +27,13 @@
 
 ```php
 $app->getHtml($route, $required = true, $cache = true, $charset = 'utf-8');
+```
+
+### <a name="method_unbuildTree"></a> Метод unbuildTree
+Разбор массива в виде иерархического дерева в обычный массив.
+
+```php
+$app->unbuildTree(array $tree = [], string $name = 'children', int $level = 0);
 ```
 
 ### <a name="method_transliterationText"></a> Метод transliterationText

@@ -329,6 +329,27 @@ class App {
     }
 
     /**
+     * Разбор массива в виде иерархического дерева в обычный массив
+     *
+     * @param array $tree Массив в виде иерархического дерева
+     * @param string $name Наименование ключа со списком дочерних элементов
+     * @param integer $level Первый уровень вложенности в иерархическом дереве
+     *
+     * @return array
+     */
+    public function unbuildTree(array $tree = [], string $name = 'children', int $level = 0):array {
+        $array = [];
+        if (is_array($tree)) {
+            foreach ($tree as $node) {
+                $children = $node[$name]; unset($node[$name]);
+                $array[] = array_merge($node, ['level' => $level]);
+                (!isset($children)) ?: $array = array_merge($array, $this->unbuildTree($children, $name, $level + 1));
+            }
+        }
+        return $array;
+    }
+
+    /**
      * @param string $text
      *
      * @return string
